@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model User {
+  id           String @id @default(uuid())
+  firstName    String @map("first_name")
+  lastName     String @map("last_name")
+  email        String @unique
+  passwordHash String @map("password_hash")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  Transactions Transaction[]
+  Category     Category[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Transaction {
+  id              String          @id @default(uuid())
+  userId          String          @map("user_id")
+  name            String
+  amount          Decimal
+  description     String?
+  type            TransactionType
+  categoryId      String          @map("category_id")
+  subCategoryId   String?         @map("sub_category_id")
+  isPaid          Boolean         @default(true)
+  datePost        DateTime        @default(now()) @map("date_post")
+  dueDate         DateTime
+  toEmergencyFund Boolean         @default(false) @map("to_emergency_fund")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Category        Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subCategory     SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
+  emergencyFundId String?
+
+  @@map("transactions")
+}
+
+model Category {
+  id     String @id @default(uuid())
+  name   String
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  Transactions  Transaction[]
+  SubCategories SubCategory[]
+
+  @@map("categories")
+}
+
+model SubCategory {
+  id         String @id @default(uuid())
+  name       String
+  categoryId String @map("category_id")
+
+  Category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  Transactions Transaction[]
+
+  @@map("sub_categories")
+}
