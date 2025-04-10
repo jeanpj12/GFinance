@@ -1,6 +1,8 @@
 #Missing Features
 
 - LogOut
+- Create default categories and subcategories when create a new user
+- Hidde Emergency Fund on Category
 - Dark Mode
 - Datepicker to change charts on dashboards
 - Data when change date picker
