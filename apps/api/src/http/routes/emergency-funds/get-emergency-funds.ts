@@ -20,12 +20,8 @@ export async function getEmergencyFunds(app: FastifyInstance) {
                         200: z.array(
                             z.object({
                                 id: z.string().uuid(),
-                                name: z.string(),
                                 amount: z.number(),
-                                description: z.string().nullable(),
-                                type: z.nativeEnum(TransactionType),
-                                categoryId: z.string().uuid(),
-                                subCategoryId: z.string().uuid().nullable(),
+                                transactionId: z.string().uuid(),
                                 isPaid: z.boolean(),
                                 dueDate: z.string().datetime(),
                             })
@@ -34,23 +30,18 @@ export async function getEmergencyFunds(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const emegencyFunds = await prisma.transaction.findMany({
-                    where: { toEmergencyFund: true },
+                const emegencyFunds = await prisma.emergencyFund.findMany({
                     select: {
                         id: true,
-                        name: true,
                         amount: true,
-                        description: true,
-                        type: true,
-                        categoryId: true,
-                        subCategoryId: true,
                         isPaid: true,
+                        transactionId: true,
                         dueDate: true,
                     },
                 });
 
                 if (!emegencyFunds) {
-                    throw new BadRequestError('Transaction not found');
+                    throw new BadRequestError('Emergency Funds not found');
                 }
 
                 return reply.status(200).send(

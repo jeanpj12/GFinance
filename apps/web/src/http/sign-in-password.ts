@@ -19,6 +19,9 @@ export async function signInWithPassword({
         email,
         password,
       }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
     .json<SignInPaswwordResponse>();
 

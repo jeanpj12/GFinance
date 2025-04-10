@@ -28,6 +28,11 @@ import { getTransactions } from './routes/transactions/get-transactions';
 import { updateTransaction } from './routes/transactions/update-transaction';
 import { deleteTransaction } from './routes/transactions/delete-transaction';
 import { getEmergencyFunds } from './routes/emergency-funds/get-emergency-funds';
+import { getWeeklySummary } from './routes/metrics/get-weekly-summary';
+import { getLastTransactions } from './routes/metrics/get-last-transactions';
+import { getBalance } from './routes/metrics/get-balance';
+import { createEmergencyFund } from './routes/emergency-funds/create-emergency-fund';
+import { updateEmergencyFund } from './routes/emergency-funds/update-emergency-fund';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.setSerializerCompiler(serializerCompiler);
@@ -70,7 +75,9 @@ app.register(createAccount);
 app.register(authenticateWithPassword);
 app.register(getProfile);
 
+app.register(createEmergencyFund);
 app.register(getEmergencyFunds);
+app.register(updateEmergencyFund);
 
 app.register(createTransaction);
 app.register(getTransactions);
@@ -87,6 +94,10 @@ app.register(createSubcategory);
 app.register(updateSubcategory);
 app.register(deleteSubcategory);
 
-app.listen({ port: env.SERVER_PORT }).then(() =>
+app.register(getWeeklySummary);
+app.register(getLastTransactions);
+app.register(getBalance);
+
+app.listen({ port: env.PORT }).then(() =>
     console.log('server is running')
 );

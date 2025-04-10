@@ -28,12 +28,14 @@
         "@repo/prettier": "*",
         "@repo/tsconfig": "*",
         "@types/bcrypt": "^5.0.2",
+        "@types/node": "^22.14.0",
         "dotenv-cli": "^8.0.0",
         "prisma": "^6.3.1",
-        "tsup": "^8.4.0"
+        "tsup": "^8.4.0",
+        "typescript": "^5.8.3"
     },
     "prisma": {
-        "seed": "tsx prisma/seed.ts"
+        "seed": "npm run env:load tsx prisma/seed.ts"
     },
     "prettier": "@repo/prettier",
     "eslintConfig": {

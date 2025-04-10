@@ -27,7 +27,6 @@ export async function updateTransaction(app: FastifyInstance) {
                         isPaid: z.boolean().optional(),
                         dueDate: z.string().datetime().optional(),
                         datePost: z.string().datetime().optional(),
-                        toEmergencyFund: z.boolean().optional(),
                     }),
                     response: {
                         204: z.null(),

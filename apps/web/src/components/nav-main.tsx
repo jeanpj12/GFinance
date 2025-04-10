@@ -17,7 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 export function NavMain({
   items,
@@ -33,6 +33,8 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const pathUrl = usePathname();
+
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -40,7 +42,8 @@ export function NavMain({
           item.items?.length === 0 ? (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
-                className="cursor-pointer"
+                isActive={pathUrl === item.url}
+                className={`cursor-pointer`}
                 tooltip={item.title}
                 onClick={() => {
                   redirect(item.url);
