@@ -33,6 +33,7 @@ import { getLastTransactions } from './routes/metrics/get-last-transactions';
 import { getBalance } from './routes/metrics/get-balance';
 import { createEmergencyFund } from './routes/emergency-funds/create-emergency-fund';
 import { updateEmergencyFund } from './routes/emergency-funds/update-emergency-fund';
+import { getMonthSummary } from './routes/metrics/get-month-summary';
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 app.setSerializerCompiler(serializerCompiler);
@@ -95,6 +96,7 @@ app.register(updateSubcategory);
 app.register(deleteSubcategory);
 
 app.register(getWeeklySummary);
+app.register(getMonthSummary);
 app.register(getLastTransactions);
 app.register(getBalance);
 

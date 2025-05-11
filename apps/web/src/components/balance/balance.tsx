@@ -27,14 +27,16 @@ import {
   Eye,
   ScanEye,
 } from "lucide-react";
+import { useDateStore } from "@/stores/useDateStore";
 
 export function Balance() {
+  const { date } = useDateStore();
   const [data, setData] = useState<GetBalanceResponse[]>();
 
   useEffect(() => {
     async function fetchBalance() {
       try {
-        const response = await getBalance();
+        const response = await getBalance({ date: date.toISOString() });
         // I had done it if the chart only accepted numbers
         // const converted = response.map((item) => ({
         //   month: item.month,
@@ -47,15 +49,17 @@ export function Balance() {
         if (err instanceof HTTPError) {
           const { message } = await err.response.json();
           console.log(message);
-          toast.error("Error when searching last transactions");
+          toast.error("[Balance] - An unexpected error occurred");
+          return
         }
 
-        toast.error("[Last Transitions] - An unexpected error occurred");
+        toast.error("Error when searching Balance");
+
       }
     }
 
     fetchBalance();
-  }, []);
+  }, [date]);
 
   // const chartConfig = {
   //   incomes: {
@@ -70,13 +74,11 @@ export function Balance() {
 
   return (
     <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="gap-4">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle>Balance</CardTitle>
-          <DollarSign size={16} />
-        </CardHeader>
-        <CardContent>
-          <span className="text-2xl font-bold">
+      <Card>
+        <CardHeader>
+          <CardDescription>Balance</CardDescription>
+          {/* <DollarSign size={16} /> */}
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
             {data ? (
               Number(data[0].balance) >= 0 ? (
                 `R$${data[0].balance}`
@@ -86,49 +88,43 @@ export function Balance() {
             ) : (
               <Skeleton className="w-full h-[25px]" />
             )}
-          </span>
-        </CardContent>
+          </CardTitle>
+        </CardHeader>
       </Card>
 
-      <Card className="gap-4">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle>Incomes</CardTitle>
-          <BanknoteArrowUp size={20} />
-        </CardHeader>
-        <CardContent>
-          <span className="text-2xl font-bold">
+      <Card>
+        <CardHeader>
+          <CardDescription>Incomes</CardDescription>
+          {/* <BanknoteArrowUp size={20} /> */}
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
             {data ? (
               `R$${data[0].incomes}`
             ) : (
               <Skeleton className="w-full h-[25px]" />
             )}
-          </span>
-        </CardContent>
+          </CardTitle>
+        </CardHeader>
       </Card>
 
-      <Card className="gap-4">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle>Expenses</CardTitle>
-          <BanknoteArrowDown size={20} />
-        </CardHeader>
-        <CardContent>
-          <span className="text-2xl font-bold">
+      <Card>
+        <CardHeader>
+          <CardDescription>Expenses</CardDescription>
+          {/* <BanknoteArrowDown size={20} /> */}
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
             {data ? (
               `R$${data[0].expenses}`
             ) : (
               <Skeleton className="w-full h-[25px]" />
             )}
-          </span>
-        </CardContent>
+          </CardTitle>
+        </CardHeader>
       </Card>
 
-      <Card className="gap-4">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle>Predicted</CardTitle>
-          <Eye size={20} />
-        </CardHeader>
-        <CardContent>
-          <span className="text-2xl font-bold">
+      <Card>
+        <CardHeader>
+          <CardDescription>Performance</CardDescription>
+          {/* <Eye size={20} /> */}
+          <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
             {data ? (
               Number(data[0].predicted) > 0 ? (
                 `R$${data[0].predicted}`
@@ -138,8 +134,8 @@ export function Balance() {
             ) : (
               <Skeleton className="w-full h-[25px]" />
             )}
-          </span>
-        </CardContent>
+          </CardTitle>
+        </CardHeader>
       </Card>
       {/* <Card className="overflow-hidden">
         <CardHeader>

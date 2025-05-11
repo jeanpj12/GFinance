@@ -66,7 +66,7 @@ export function DialogAddCategory({
 
           console.log(message);
 
-          toast.error("Error when searching categories");
+          toast.error("[ADD NEW CATEGORY]Error when searching categories");
         }
       }
     }

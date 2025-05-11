@@ -61,7 +61,7 @@ export function DialogExpense() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const data = await getCategories();
+        const data = await getCategories("EXPENSE");
         setCategories(data);
       } catch (err) {
         if (err instanceof HTTPError) {

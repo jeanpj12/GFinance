@@ -8,8 +8,7 @@ interface GetCategoriesResponse {
   updatedAt: string;
 }
 
-export async function getCategories() {
-  const response = await api.get("category").json<GetCategoriesResponse[]>();
-
+export async function getCategories(type: "EXPENSE" | "INCOME") {
+  const response = await api.get(`category/${type}`).json<GetCategoriesResponse[] | []>();
   return response;
 }

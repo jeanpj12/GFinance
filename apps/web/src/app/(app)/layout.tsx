@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { NavActions } from "@/components/nav-actions";
+import { SetSummaryDate } from "@/components/set-date-summary";
 
 export default async function AppLayout({
   children,
@@ -37,15 +38,7 @@ export default async function AppLayout({
                   orientation="vertical"
                   className="mr-2 h-4 boreder"
                 />
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbPage className="line-clamp-1">
-                        Mudar isso daqui depois
-                      </BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
+                <SetSummaryDate/>
               </div>
               <div className="ml-auto px-3">
                 <NavActions />

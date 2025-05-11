@@ -33,7 +33,7 @@ export async function createEmergencyFund(app: FastifyInstance) {
                 const emergencyCategory = await prisma.category.findFirst({
                     where: {
                         userId,
-                        name: 'Emergency Fund',
+                        name: 'Fundo de emergencia',
                     },
                 });
 

@@ -8,6 +8,7 @@ import {
   ClipboardPlus,
   Tag,
   Calendar,
+  ShipWheel,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -61,6 +62,13 @@ const data = {
       items: [],
     },
     {
+      title: "Simulator",
+      url: "/simulator",
+      icon: ShipWheel,
+      isActive: true,
+      items: [],
+    },
+    {
       title: "Categories",
       url: "/categories",
       icon: Tag,
@@ -88,7 +96,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <Separator />
       <SidebarContent>
-        <MyCalendar />
         <Separator />
         <NavMain items={data.navMain} />
         <Separator />

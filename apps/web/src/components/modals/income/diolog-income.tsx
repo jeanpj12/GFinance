@@ -65,7 +65,7 @@ export function DialogIncome() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const data = await getCategories();
+        const data = await getCategories("INCOME");
         setCategories(data);
       } catch (err) {
         if (err instanceof HTTPError) {
@@ -73,7 +73,7 @@ export function DialogIncome() {
 
           console.log(message);
 
-          toast.error("Error when searching categories");
+          toast.error("[MODAL - INCOME]Error when searching categories");
         }
       }
     }

@@ -22,5 +22,8 @@ export async function signUp({
       email,
       password,
     }),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 }

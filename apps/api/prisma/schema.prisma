@@ -80,9 +80,11 @@ model EmergencyFund {
 }
 
 model Category {
-  id     String @id @default(uuid())
+  id     String          @id @default(uuid())
   name   String
-  userId String @map("user_id")
+  userId String          @map("user_id")
+  type   TransactionType
+  hidden Boolean @default(false)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

@@ -48,7 +48,7 @@ export function LastTransactions() {
     <div className="w-full">
       <Card>
         <CardHeader>
-          <CardTitle>Last Transactions</CardTitle>
+          <CardTitle>Latest transactions added</CardTitle>
         </CardHeader>
         <CardContent>
           {data ? (

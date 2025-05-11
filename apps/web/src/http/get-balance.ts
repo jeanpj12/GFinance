@@ -9,9 +9,13 @@ export interface GetBalanceResponse {
   predicted: string;
 }
 
-export async function getBalance() {
+export interface GetBalanceRequest {
+  date: string;
+}
+
+export async function getBalance({ date }: GetBalanceRequest) {
   const response = await api
-    .get("metrics/balance")
+    .get(`metrics/balance/${date}`)
     .json<GetBalanceResponse[]>();
 
   return response;

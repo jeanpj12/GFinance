@@ -11,12 +11,15 @@ export async function getBalance(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/metrics/balance',
+            '/metrics/balance/:date',
             {
                 schema: {
                     tags: ['metrics'],
                     summary: 'Get balance',
                     security: [{ bearerAuth: [] }],
+                    params: z.object({
+                        date: z.string().transform((val) => new Date(val)),
+                    }),
                     response: {
                         200: z.array(
                             z.object({
@@ -32,16 +35,16 @@ export async function getBalance(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const now = new Date();
+                const { date } = request.params;
 
                 const startOfMonth = new Date(
-                    now.getFullYear(),
-                    now.getMonth(),
+                    date.getFullYear(),
+                    date.getMonth(),
                     1
                 );
                 const endOfMonth = new Date(
-                    now.getFullYear(),
-                    now.getMonth() + 1,
+                    date.getFullYear(),
+                    date.getMonth() + 1,
                     0,
                     23,
                     59,
@@ -49,7 +52,6 @@ export async function getBalance(app: FastifyInstance) {
                     999
                 );
 
-                // SALDO INICIAL (antes do mês atual, apenas pagos)
                 const previousTransactions = await prisma.transaction.findMany({
                     where: {
                         isPaid: true,
@@ -71,7 +73,6 @@ export async function getBalance(app: FastifyInstance) {
                     }
                 }, new Decimal(0));
 
-                // TRANSAÇÕES DO MÊS ATUAL (pagas)
                 const paidTransactions = await prisma.transaction.findMany({
                     where: {
                         isPaid: true,
@@ -94,9 +95,8 @@ export async function getBalance(app: FastifyInstance) {
                     .filter((t) => t.type === 'EXPENSE')
                     .reduce((acc, t) => acc.plus(t.amount), new Decimal(0));
 
-                const balance = incomes.minus(expenses);
+                const balance = initial.plus(incomes).minus(expenses);
 
-                // TRANSAÇÕES DO MÊS ATUAL (pagas + não pagas) = previsão
                 const allMonthTransactions = await prisma.transaction.findMany({
                     where: {
                         dueDate: {
@@ -122,7 +122,7 @@ export async function getBalance(app: FastifyInstance) {
                     .plus(predictedIncomes)
                     .minus(predictedExpenses);
 
-                const month = format(now, 'MMMM', { locale: ptBR });
+                const month = format(date, 'MMMM', { locale: ptBR });
 
                 const data = [
                     {
