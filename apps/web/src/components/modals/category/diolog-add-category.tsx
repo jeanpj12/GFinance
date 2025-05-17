@@ -36,12 +36,14 @@ interface DialogAddCategoryProps {
   setCategories: React.Dispatch<
     React.SetStateAction<{ id: string; name: string }[]>
   >;
+  type: "EXPENSE" | "INCOME";
 }
 
 export function DialogAddCategory({
   open,
   setCategories,
   onOpenChange,
+  type,
 }: DialogAddCategoryProps) {
   const [{ errors, message, sucess }, handleAddCategory, isPending] =
     useFormState(addCategoryAction);
@@ -58,7 +60,7 @@ export function DialogAddCategory({
 
     async function fetchCategories() {
       try {
-        const data = await getCategories();
+        const data = await getCategories(type);
         setCategories(data);
       } catch (err) {
         if (err instanceof HTTPError) {
@@ -96,6 +98,8 @@ export function DialogAddCategory({
               {errors?.name && (
                 <p className="text-xs text-red-500">{errors.name}</p>
               )}
+
+              <Input id="type" name="type" type="hidden" value={type}/>
             </div>
 
             <DialogFooter>

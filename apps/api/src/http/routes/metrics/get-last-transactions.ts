@@ -13,41 +13,84 @@ export async function getLastTransactions(app: FastifyInstance) {
             '/metrics/last-transactions',
             {
                 schema: {
-                    tags: ['metrics'],
+                    tags: ['transaction'],
                     summary: 'List transaction',
                     security: [{ bearerAuth: [] }],
+                    querystring: z.object({
+                        id: z.string().uuid().optional(),
+                    }),
                     response: {
                         200: z.array(
                             z.object({
-                                id: z.string(),
+                                id: z.string().uuid(),
                                 name: z.string(),
                                 amount: z.number(),
-                                dueDate: z.string().datetime(),
+                                description: z.string().nullable(),
                                 type: z.nativeEnum(TransactionType),
+                                categoryId: z.string().uuid(),
+                                subCategoryId: z.string().uuid().nullable(),
+                                isPaid: z.boolean(),
+                                dueDate: z.string().datetime(),
                             })
                         ),
                     },
                 },
             },
             async (request, reply) => {
+                const { id } = request.query;
+
+                if (id) {
+                    const transaction = await prisma.transaction.findUnique({
+                        where: { id },
+                        select: {
+                            id: true,
+                            name: true,
+                            amount: true,
+                            description: true,
+                            type: true,
+                            categoryId: true,
+                            subCategoryId: true,
+                            isPaid: true,
+                            dueDate: true,
+                        },
+                    });
+
+                    if (!transaction) {
+                        throw new BadRequestError('Transaction not found');
+                    }
+
+                    return reply.status(200).send([
+                        {
+                            ...transaction,
+                            amount: transaction.amount.toNumber(),
+                            dueDate: transaction.dueDate.toISOString(),
+                        },
+                    ]);
+                }
+
                 const transactions = await prisma.transaction.findMany({
                     select: {
                         id: true,
                         name: true,
                         amount: true,
-                        dueDate: true,
+                        description: true,
                         type: true,
+                        categoryId: true,
+                        subCategoryId: true,
+                        isPaid: true,
+                        dueDate: true,
                     },
-                    orderBy: { createdAt: 'desc' },
                 });
 
-                const data = transactions.map((transaction) => ({
-                    ...transaction,
-                    amount: transaction.amount.toNumber(),
-                    dueDate: transaction.dueDate.toISOString()
-                }));
-
-                return reply.status(200).send(data);
+                return reply.status(200).send(
+                    transactions
+                        .map((transaction) => ({
+                            ...transaction,
+                            amount: transaction.amount.toNumber(),
+                            dueDate: transaction.dueDate.toISOString(),
+                        }))
+                        .slice(0, 10)
+                );
             }
         );
 }

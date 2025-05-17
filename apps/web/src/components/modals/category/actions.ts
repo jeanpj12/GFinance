@@ -8,6 +8,7 @@ import { addCategory } from "@/http/add-category";
 
 const addCategorySchema = z.object({
   name: z.string(),
+  type: z.enum(["EXPENSE", "INCOME"])
 });
 
 export async function addCategoryAction(data: FormData) {
@@ -26,15 +27,12 @@ export async function addCategoryAction(data: FormData) {
     return { sucess: false, message: null, errors };
   }
 
-  const { name } = categoryData.data;
-
-  console.log({
-    name,
-  });
+  const { name, type } = categoryData.data;
 
   try {
     const response = await addCategory({
       name,
+      type
     });
     return {
       sucess: true,

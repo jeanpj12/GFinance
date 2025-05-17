@@ -22,4 +22,6 @@
 - Notifications
 - Billing
 
-#NEXT 
+#NEXT
+
+- Edit and exclude transactions

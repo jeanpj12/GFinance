@@ -5,12 +5,13 @@ import z from 'zod';
 import { auth } from '@/http/middlewares/auth';
 import { BadRequestError } from '../_errors/bad-request-error';
 import { TransactionType } from '@prisma/client';
+import { endOfMonth, startOfMonth } from 'date-fns';
 
 export async function getTransactions(app: FastifyInstance) {
     app.withTypeProvider<ZodTypeProvider>()
         .register(auth)
         .get(
-            '/transaction',
+            '/transaction/',
             {
                 schema: {
                     tags: ['transaction'],
@@ -18,6 +19,7 @@ export async function getTransactions(app: FastifyInstance) {
                     security: [{ bearerAuth: [] }],
                     querystring: z.object({
                         id: z.string().uuid().optional(),
+                        date: z.string().transform((val) => new Date(val)).optional(),
                     }),
                     response: {
                         200: z.array(
@@ -37,7 +39,7 @@ export async function getTransactions(app: FastifyInstance) {
                 },
             },
             async (request, reply) => {
-                const { id } = request.query;
+                const { id, date } = request.query;
 
                 if (id) {
                     const transaction = await prisma.transaction.findUnique({
@@ -66,6 +68,29 @@ export async function getTransactions(app: FastifyInstance) {
                             dueDate: transaction.dueDate.toISOString(),
                         },
                     ]);
+                }
+
+                if (date) {
+                    const start = startOfMonth(date);
+                    const end = endOfMonth(date);
+
+                    const transactions = await prisma.transaction.findMany({
+                        where: {
+                            isPaid: true,
+                            createdAt: {
+                                gte: start,
+                                lte: end,
+                            },
+                        },
+                    });
+
+                    return reply.status(200).send(
+                        transactions.map((transaction) => ({
+                            ...transaction,
+                            amount: transaction.amount.toNumber(),
+                            dueDate: transaction.dueDate.toISOString(),
+                        }))
+                    );
                 }
 
                 const transactions = await prisma.transaction.findMany({

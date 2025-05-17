@@ -27,7 +27,6 @@ export function LastTransactions() {
                 ? transition.amount * -1
                 : transition.amount,
           }))
-          .slice(0, 10);
 
         setData(mappedData);
       } catch (err) {

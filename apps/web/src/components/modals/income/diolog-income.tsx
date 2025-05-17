@@ -388,6 +388,7 @@ export function DialogIncome() {
             open={showAddCategory}
             onOpenChange={setShowAddCategory}
             setCategories={setCategories}
+            type="INCOME"
           />
 
           <DialogAddSubcategory

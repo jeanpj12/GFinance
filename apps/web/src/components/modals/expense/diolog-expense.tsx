@@ -41,6 +41,8 @@ import { format } from "date-fns";
 import { SidebarMenuButton } from "../../ui/sidebar";
 import { useFormState } from "@/hooks/use-form-state";
 import { addExpense } from "./actions";
+import { DialogAddCategory } from "../category/diolog-add-category";
+import { DialogAddSubcategory } from "../subcategory/diolog-add-subcategory";
 
 export function DialogExpense() {
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
@@ -57,6 +59,8 @@ export function DialogExpense() {
   const [date, setDate] = useState<Date>();
   const [isPaid, setIsPaid] = useState(false);
   const [toEmergencyFund, setToEmergencyFund] = useState(false);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showAddSubcategory, setShowAddSubategory] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -224,8 +228,13 @@ export function DialogExpense() {
             </div>
 
             <div>
-              <Button variant="outline">
-                <Plus />
+            <Button
+                type="button"
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setShowAddCategory(true)}
+              >
+                <Plus className="size-4" />
               </Button>
             </div>
 
@@ -299,8 +308,13 @@ export function DialogExpense() {
             </div>
 
             <div>
-              <Button variant="outline">
-                <Plus />
+              <Button
+                type="button"
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setShowAddSubategory(true)}
+              >
+                <Plus className="size-4" />
               </Button>
             </div>
             {errors?.subCategoryId && (
@@ -321,22 +335,6 @@ export function DialogExpense() {
 
             {errors?.isPaid && (
               <p className="text-xs text-red-500">{errors.isPaid}</p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Switch
-              id="toEmergencyFund"
-              name="toEmergencyFund"
-              checked={toEmergencyFund}
-              onCheckedChange={(e) => setToEmergencyFund(e)}
-            />
-            <Label htmlFor="toEmergencyFund" className="text-right">
-              To Emergency Fund
-            </Label>
-
-            {errors?.toEmergencyFund && (
-              <p className="text-xs text-red-500">{errors.toEmergencyFund}</p>
             )}
           </div>
 
@@ -384,6 +382,22 @@ export function DialogExpense() {
             </Button>
           </DialogFooter>
         </form>
+
+        <div className="hidden">
+          <DialogAddCategory
+            open={showAddCategory}
+            onOpenChange={setShowAddCategory}
+            setCategories={setCategories}
+            type="EXPENSE"
+          />
+
+          <DialogAddSubcategory
+            categories={categories}
+            open={showAddSubcategory}
+            onOpenChange={setShowAddSubategory}
+            setSubcategories={setSubCategories}
+          />
+        </div>
       </DialogContent>
     </div>
   );
