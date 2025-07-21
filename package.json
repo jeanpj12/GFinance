@@ -1,5 +1,5 @@
 {
-  "name": "GFinance",
+  "name": "one-off-custom",
   "private": true,
   "scripts": {
     "build": "turbo run build",
